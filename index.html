@@ -168,18 +168,15 @@ Self-Improving Robotic Manipulation</div>
     </a>
     <!-- Caption for Figure 1 -->
     <p class="figure-caption">
-      <b>Overview of the LACY framework:</b> LACY builds upon a single VLM fine-tuned to serve three roles: (1) an action generator (L2A), (2) an action explainer (A2L), and (3) a consistency verifier (L2C). 
-      The framework operates as a closed-loop system, where these bidirectional capabilities enable LACY to generate new high-quality training data and iteratively refine itself. 
-      (4) Each task is framed as a chain-of-thought (CoT) process, where the model first performs object grounding to predict object names and locations and then uses this contextual information to complete the target task. 
-      (5) We sample the new sampled dataset which can be added to the initial dataset.
+      <b>Overview of the LACY framework</b> A single vision-language model jointly performs three tasks—L2A, A2L, and L2C—forming a self-improving cycle where actions and language refine each other through consistency verification.
     </p>
 
     <div class="section">
 
-        LACY builds upon a single VLM fine-tuned to serve three roles: (1) an action generator (L2A), (2) an action explainer (A2L), and (3) a consistency verifier (L2C). 
-      The framework operates as a closed-loop system, where these bidirectional capabilities enable LACY to generate new high-quality training data and iteratively refine itself. 
-      (4) Each task is framed as a chain-of-thought (CoT) process, where the model first performs object grounding to predict object names and locations and then uses this contextual information to complete the target task. 
-      (5) We sample the new sampled dataset which can be added to the initial dataset.
+      <b>LACY (Language-Action Cycle)</b> unifies three synergistic tasks—language-to-action generation (L2A), action-to-language explanation (A2L), and language-to-consistency verification (L2C)—within a single vision-language model.
+The framework operates as a closed-loop system, where L2A produces actions from language, A2L reconstructs a linguistic description from those actions, and L2C verifies whether the two language descriptions remain semantically consistent.
+This bidirectional cycle enables self-improving data generation: the model autonomously produces new training triplets and selectively retains only high-confidence samples through the L2C filter.
+By combining multi-task fine-tuning, chain-of-thought grounding, and confidence-based data selection, LACY continually enhances its manipulation policy without additional human supervision.
     </div> 
 
 
@@ -230,14 +227,20 @@ Self-Improving Robotic Manipulation</div>
     <p class="figure-caption">
       <b>Language Consistency Verification (L2C):</b> LACY leverages the L2C task to autonomously filter and curate high-quality training data from the L2A and A2L outputs, ensuring that only samples with consistent language-action pairs are retained for further training. This self-supervisory mechanism enhances the model's robustness and generalization capabilities.
 
+
+    <div class="section">
+
+      The <b>L2C (Language-to-Consistency)</b> module evaluates whether the input language and the reconstructed description convey the same semantic intent.
+Instead of treating the output as a discrete decision, L2C computes a continuous confidence score by examining the logits of the tokens “0” and “1” at the final decoding step.
+This score is then used to selectively filter low-confidence samples, enabling active self-improvement during data augmentation.
+    </div> 
+
     <a id="figure-4-img" href="figs/self_supervision_pipeline.png" download="self_supervision_pipeline.png">
     <img src="figs/self_supervision_pipeline.png" alt="L2C pipeline">
     </a>
     <!-- Caption for Figure 4 -->
     <p class="figure-caption">
-      <b>L2C Pipeline:</b>  The L2C (Language-to-Consistency) verifier assesses semantic alignment between input and reconstructed language pairs.
-Instead of relying on discrete model outputs, LACY extracts the logits of the “0” / “1” tokens at the final decoding step and converts their difference into a calibrated confidence value via a sigmoid function.
-This score determines whether newly generated samples are retained during the model's self-training cycle.
+      <b>L2C Pipeline:</b>  The L2C module estimates semantic consistency between two language descriptions by converting the logit difference of “0”/“1” tokens into a continuous confidence score.
 
     <!-- <div class="additional-video-row">
       <video id="input-video-cropped" class="additional-video-item" src="train_in_sim/vid1_input.mp4" autoplay muted playsinline loop></video>
