@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>LACY</title>
+  <link rel="icon" href="./figs/logo.png" type="image/png">
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="toc">
+    <h3>Content</h3>
+    <hr>
+    <ul>
+      <li><a href="#abstract">Abstract</a></li>
+      <li><a href="#deploy-in-sim">Simulation Demo</a></li>
+      <li><a href="#deploy-in-real">Real-world Demo</a></li>
+      <li><a href="#approach">Approach</a></li>
+      <li class="toc-subsection"><a href="#real-to-sim">Real to Sim</a></li>
+      <li class="toc-subsection"><a href="#training-in-sim">Training in Sim</a></li>
+      <li><a href="#deploy-in-real-fail">Failure Modes</a></li>
+      <!-- <li><a href="#acknowledgements">Acknowledgements</a></li> -->
+    </ul>
+  </div>
+
+  <div class="main-content">
+    <div class="hero-text">LACY</div>
+    <div class="sub-hero-text">A Vision-Language Model-based Language-Action Cycle for
+Self-Improving Robotic Manipulation</div>
+
+    <!-- Add Authors -->
+    <div class="authors">
+      <!-- <a href="https://allshire.org/" target="_blank">Arthur Allshire*</a>, <a href="https://hongsukchoi.github.io/" target="_blank">Hongsuk Choi*</a>, <a href="https://www.junyi42.com/" target="_blank">Junyi Zhang*</a>, <a href="https://mcallisterdavid.com/" target="_blank">David McAllister*</a>, <a href="https://antoniomacaronio.github.io/personal-website/#/home/" target="_blank">Anthony Zhang</a>, <a href="https://chungmin99.github.io/" target="_blank">Chung Min Kim</a>,<br>
+      <a href="https://people.eecs.berkeley.edu/~trevor/" target="_blank">Trevor Darrell</a>, <a href="https://people.eecs.berkeley.edu/~pabbeel/" target="_blank">Pieter Abbeel</a>, <a href="https://people.eecs.berkeley.edu/~malik/" target="_blank">Jitendra Malik</a>, <a href="https://people.eecs.berkeley.edu/~kanazawa/" target="_blank">Angjoo Kanazawa.</a>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(*:equal contribution)
+      <span class="affiliation">University of California, Berkeley</span> -->
+      Anonymous Authors
+    </div>
+    <!-- End Authors -->
+
+    <!-- use the video ./figs/videomimic_teaser.mp4 -->
+    <video id="teaser-video" src="./figs/lacy_main.mp4" width="100%" height="100%" controls muted playsinline autoplay></video>
+    <!-- Caption for Figure 1 (Teaser Video) -->
+    <p class="figure-caption">
+        <span style="font-variant: small-caps;">VideoMimic</span> is a real-to-sim-to-real pipeline that converts monocular videos into transferable humanoid skills, letting robots learn context-aware behaviors (terrain-traversing, climbing, sitting) in a single policy.
+    </p>
+
+    <!-- Add Quick Links Here -->
+    <!-- <div class="quick-links">
+      <a href="./VideoMimic.pdf" target="_blank">[pdf]</a>
+      <a href="https://arxiv.org/abs/2505.03729" target="_blank">[arxiv]</a>
+      <a href="https://github.com/hongsukchoi/VideoMimic">[code]</a> 
+      <a href="#gallery-section-anchor">[gallery]</a>
+    </div> -->
+    
+    <div class="tagline" id="abstract">Abstract.</div>
+
+
+    <div class="section">
+
+        <!-- How can we teach humanoids to climb staircases and sit on chairs using the surrounding environment context? Arguably, the simplest way is to <em>just show them</em>&mdash;casually capture a human motion video and feed it to humanoids.
+        We introduce <span style="font-variant: small-caps;">VideoMimic</span>, a real-to-sim-to-real pipeline that mines everyday videos, jointly reconstructs the humans and the environment, and produces whole-body control policies for humanoid robots that perform the corresponding skills.
+       We demonstrate the results of our pipeline on real humanoid robots, showing robust, repeatable contextual control such as staircase ascents and descents, sitting and standing from chairs and benches, as well as other dynamic whole-body skills&mdash;all from a single policy, conditioned on the environment and global root commands. 
+       <span style="font-variant: small-caps;">VideoMimic</span> offers a scalable path towards teaching humanoids to operate in diverse real-world environments. -->
+    
+
+        We present LACY (Language-Action Cycle), a unified vision-language framework that enables bidirectional grounding between language and action for robotic manipulation. 
+        Unlike prior works that focus solely on language-to-action (L2A) learning, LACY jointly trains three complementary tasks—L2A, action-to-language explanation (A2L), and language-consistency verification (L2C)—within a single model. 
+        This design forms a self-improving loop that autonomously generates and filters training data through the L2A→A2L→L2C cycle, significantly enhancing data efficiency and generalization.
+        Experiments on both simulation and real-world pick-and-place tasks show that LACY improves manipulation success rates by over 56%, demonstrating robust and scalable language-action understanding.
+    </div> 
+
+    <div class="tagline" id="deploy-in-sim">Simulation Demo.</div>
+
+    <!-- Video Gallery Section - SIMULATION RELATIVE REASONING VIDEOS -->
+    <div class="video-gallery-section" id="simRelGallerySection">
+      <div class="video-gallery-container">
+        <div class="video-gallery" id="videoGallerySimRel">
+          <!-- Videos remain here - ADD autoplay -->
+          <video class="gallery-video" src="./real_rel/1.mp4" autoplay muted playsinline loop></video>
+          <video class="gallery-video" src="./real_rel/2.mp4" autoplay muted playsinline loop></video>
+          <video class="gallery-video" src="./real_rel/3.mp4" autoplay muted playsinline loop></video>
+          <video class="gallery-video" src="./real_rel/4.mp4" autoplay muted playsinline loop></video>
+          <video class="gallery-video" src="./real_rel/5.mp4" autoplay muted playsinline loop></video>
+          <!-- Add more videos as needed, ensuring they have autoplay muted loop -->
+        </div>
+      </div>
+      <!-- Container for the caption AND buttons -->
+      <div class="gallery-caption-container">
+          <!-- Move button controls INSIDE caption container -->
+          <div class="gallery-nav-controls">
+              <button class="gallery-nav left" id="scrollLeftBtnSimRel">&lt;</button>
+              <button class="gallery-nav right" id="scrollRightBtnSimRel">&gt;</button>
+          </div>
+          <!-- Caption text -->
+          <p class="figure-caption gallery-caption">
+              <b>Relative spatial reasoning:</b> The robot understands the spatial relationship between the target object and the reference object and successfully executes the pick-and-place task.
+          </p>
+      </div>
+    </div>
+  <!-- End Video Gallery Section -->
+
+  <!-- Video Gallery Section - SIMULATION ABSOLUTE REASONING VIDEOS -->
+  <div class="video-gallery-section" id="simAbsGallerySection">
+    <div class="video-gallery-container">
+      <div class="video-gallery" id="videoGallerySimAbs">
+        <!-- Videos remain here - ADD autoplay -->
+        <video class="gallery-video" src="./real_abs/1.mp4" autoplay muted playsinline loop></video>
+        <video class="gallery-video" src="./real_abs/2.mp4" autoplay muted playsinline loop></video>
+        <video class="gallery-video" src="./real_abs/3.mp4" autoplay muted playsinline loop></video>
+        <video class="gallery-video" src="./real_abs/4.mp4" autoplay muted playsinline loop></video>
+        <video class="gallery-video" src="./real_abs/5.mp4" autoplay muted playsinline loop></video>
+        <!-- Add more videos as needed, ensuring they have autoplay muted loop -->
+      </div>
+    </div>
+    <!-- Container for the caption AND buttons -->
+    <div class="gallery-caption-container">
+        <!-- Move button controls INSIDE caption container -->
+        <div class="gallery-nav-controls">
+            <button class="gallery-nav left" id="scrollLeftBtnSimAbs">&lt;</button>
+            <button class="gallery-nav right" id="scrollRightBtnSimAbs">&gt;</button>
+        </div>
+        <!-- Caption text -->
+        <p class="figure-caption gallery-caption">
+            <b>Absolute spatial reasoning:</b> The robot understands the absolute spatial semantics of the target object on the workspace and successfully executes the pick-and-place task.
+        </p>
+    </div>
+  </div>
+  <!-- End Video Gallery Section -->
+
+    <div class="tagline" id="deploy-in-real">Real-world Demo.</div>
+
+    <!-- Video Gallery Section - REAL RELATIVE REASONING VIDEOS -->
+    <div class="video-gallery-section" id="realRelGallerySection">
+      <div class="video-gallery-container">
+        <div class="video-gallery" id="videoGalleryRealRel">
+          <!-- Videos remain here - ADD autoplay -->
+          <video class="gallery-video" src="./real_rel/1.mp4" autoplay muted playsinline loop></video>
+          <video class="gallery-video" src="./real_rel/2.mp4" autoplay muted playsinline loop></video>
+          <video class="gallery-video" src="./real_rel/3.mp4" autoplay muted playsinline loop></video>
+          <video class="gallery-video" src="./real_rel/4.mp4" autoplay muted playsinline loop></video>
+          <video class="gallery-video" src="./real_rel/5.mp4" autoplay muted playsinline loop></video>
+          <!-- Add more videos as needed, ensuring they have autoplay muted loop -->
+        </div>
+      </div>
+      <!-- Container for the caption AND buttons -->
+      <div class="gallery-caption-container">
+          <!-- Move button controls INSIDE caption container -->
+          <div class="gallery-nav-controls">
+              <button class="gallery-nav left" id="scrollLeftBtnRealRel">&lt;</button>
+              <button class="gallery-nav right" id="scrollRightBtnRealRel">&gt;</button>
+          </div>
+          <!-- Caption text -->
+          <p class="figure-caption gallery-caption">
+              <b>Relative spatial reasoning:</b> The robot understands the spatial relationship between the target object and the reference object and successfully executes the pick-and-place task.
+          </p>
+      </div>
+    </div>
+  <!-- End Video Gallery Section -->
+
+  <!-- Video Gallery Section - REAL ABSOLUTE REASONING VIDEOS -->
+  <div class="video-gallery-section" id="realAbsGallerySection">
+    <div class="video-gallery-container">
+      <div class="video-gallery" id="videoGalleryRealAbs">
+        <!-- Videos remain here - ADD autoplay -->
+        <video class="gallery-video" src="./real_abs/1.mp4" autoplay muted playsinline loop></video>
+        <video class="gallery-video" src="./real_abs/2.mp4" autoplay muted playsinline loop></video>
+        <video class="gallery-video" src="./real_abs/3.mp4" autoplay muted playsinline loop></video>
+        <video class="gallery-video" src="./real_abs/4.mp4" autoplay muted playsinline loop></video>
+        <video class="gallery-video" src="./real_abs/5.mp4" autoplay muted playsinline loop></video>
+        <!-- Add more videos as needed, ensuring they have autoplay muted loop -->
+      </div>
+    </div>
+    <!-- Container for the caption AND buttons -->
+    <div class="gallery-caption-container">
+        <!-- Move button controls INSIDE caption container -->
+        <div class="gallery-nav-controls">
+            <button class="gallery-nav left" id="scrollLeftBtnRealAbs">&lt;</button>
+            <button class="gallery-nav right" id="scrollRightBtnRealAbs">&gt;</button>
+        </div>
+        <!-- Caption text -->
+        <p class="figure-caption gallery-caption">
+            <b>Absolute spatial reasoning:</b> The robot understands the absolute spatial semantics of the target object on the workspace and successfully executes the pick-and-place task.
+        </p>
+    </div>
+  </div>
+  <!-- End Video Gallery Section -->
+
+  
+    <div class="tagline" id="approach">Approach.</div>
+
+    <div class="r2s-vertical-layout">
+      <div class="r2s-video-row r2s-top-row">
+        <video class="r2s-video-item r2s-video-input" src="./single/input.mp4" autoplay muted loop playsinline></video>
+        <video class="r2s-video-item r2s-video-smpl" src="./single/smpl.mp4" autoplay muted loop playsinline></video>
+      </div>
+      <div class="r2s-caption-row">
+        <p class="r2s-caption-item">Input Video</p>
+        <p class="r2s-caption-item">Human + Scene Reconstruction</p>
+      </div>
+      <div class="r2s-video-row r2s-bottom-row">
+        <video class="r2s-video-item r2s-video-g1" src="./single/g1.mp4" autoplay muted loop playsinline></video>
+        <div class="stacked-ego-videos">
+          <video class="r2s-video-item r2s-video-ego-rgb" src="./single/ego_rgb.mp4" autoplay muted loop playsinline></video>
+          <video class="r2s-video-item r2s-video-ego-depth" src="./single/ego_depth.mp4" autoplay muted loop playsinline></video>
+        </div>
+        <video class="r2s-video-item r2s-video-sim" src="./single/sim.mp4" autoplay muted loop playsinline></video>
+      </div>
+      <div class="r2s-caption-row">
+        <p class="r2s-caption-item">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;G1 Retargeted Results</p>
+        <p class="r2s-caption-item">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Egoview (RGB/Depth)</p>
+        <p class="r2s-caption-item">Training in Simulation&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+      </div>
+      <p class="figure-caption">
+        <b>From a monocular video, we jointly reconstruct metric-scale 4D human trajectories and dense scene geometry. The human motion is retargeted to a humanoid, and with the scene converted to a mesh in the simulator, the motion is used as a reference to train a context-aware whole-body control policy. While our policy does not use RGB conditioning for now, we demonstrate the potential of our reconstruction for ego-view rendering.</b>
+      </p>
+    </div>
+
+    <div class="section-subtitle" id="real-to-sim">1. Real to Sim.</div>
+
+  <!-- Video Gallery Section - SITTING VIDEOS -->
+  <div class="video-gallery-section" id="reconstructionGallerySection">
+    <div class="video-gallery-container">
+      <div class="video-gallery" id="videoGalleryReconstruction">
+        <!-- Videos remain here - ADD autoplay -->
+        <video class="gallery-video" src="./reconstruction/6.mp4" autoplay muted playsinline loop></video>
+        <video class="gallery-video" src="./reconstruction/11.mp4" autoplay muted playsinline loop></video>
+        <video class="gallery-video" src="./reconstruction/13.mp4" autoplay muted playsinline loop></video>
+        <video class="gallery-video" src="./reconstruction/7.mp4" autoplay muted playsinline loop></video>
+        <video class="gallery-video" src="./reconstruction/14.mp4" autoplay muted playsinline loop></video>
+        <!-- Add more videos as needed, ensuring they have autoplay muted loop -->
+      </div>
+    </div>
+    <!-- Container for the caption AND buttons -->
+    <div class="gallery-caption-container">
+        <!-- Move button controls INSIDE caption container -->
+        <div class="gallery-nav-controls">
+            <button class="gallery-nav left" id="scrollLeftBtnReconstruction">&lt;</button>
+            <button class="gallery-nav right" id="scrollRightBtnReconstruction">&gt;</button>
+        </div>
+        <!-- Caption text -->
+        <p class="figure-caption gallery-caption" style="margin-bottom: 30px;">
+            <b>Human + World Reconstruction:</b> Our reconstruction pipeline can handle videos with multiple humans and complex environments from Internet. More results in the <a href="./page1.html" target="_blank">gallery</a>.
+        </p>
+    </div>
+  </div>
+  <!-- End Video Gallery Section -->
+
+    <a id="figure-1-img" href="figs/2.png" download="2.png">
+      <img src="figs/2-min.png" alt="real-to-sim pipeline">
+    </a>
+    <!-- Caption for Figure 2 -->
+    <p class="figure-caption">
+      <b>Figure 1:</b> The Real-to-Sim pipeline reconstructs human motion and scene geometry from video, outputting simulator-ready data.
+    </p>
+
+    <a id="figure-2-img" href="figs/4.png" download="4.png">
+      <img src="figs/4-min.png" alt="Approach Overview">
+    </a>
+    <!-- Caption for Figure 2 -->
+    <p class="figure-caption">
+      <b>Figure 2:</b> Versatile capabilities include handling internet videos, multi-human reconstruction, and ego-view rendering.
+    </p>
+
+    <div class="section-subtitle" id="training-in-sim">2. Training in Sim.</div>
+
+    <a id="figure-3-img" href="figs/3.png" download="3.png">
+      <img src="figs/3-min.png" alt="Training in Sim">
+    </a>
+    <!-- Caption for Figure 3 -->
+    <p class="figure-caption">
+      <b>Figure 3:</b> Policy training pipeline in simulation, progressing from MoCap pre-training to environment-aware tracking and distillation.
+    </p>
+
+    <div class="additional-video-row">
+      <video id="input-video-cropped" class="additional-video-item" src="train_in_sim/vid1_input.mp4" autoplay muted playsinline loop></video>
+      <video class="additional-video-item" src="train_in_sim/vid1_3d.mp4" autoplay muted playsinline loop></video>
+      <video class="additional-video-item" src="train_in_sim/vid1_rl.mp4" autoplay muted playsinline loop></video>
+  </div>
+  <div class="additional-video-row" style="margin-top: 20px;">
+    <video id="input-video-cropped2" class="additional-video-item" src="train_in_sim/vid2_input.mp4#t=3" style="margin-right: 20px;" autoplay muted playsinline loop></video>
+    <video id="input-video-cropped3" class="additional-video-item" src="train_in_sim/vid2_3d.mp4" autoplay muted playsinline loop></video>
+    <video id="input-video-cropped4" class="additional-video-item" src="train_in_sim/vid2_rl.mp4" style="margin-left: 20px;" autoplay muted playsinline loop></video>
+</div>
+  <div class="r2s-caption-row" style="margin-top: 10px;">
+      <p class="r2s-caption-item">(a) input video</p>
+      <p class="r2s-caption-item">(b) reconstructed environment and human</p>
+      <p class="r2s-caption-item">(c) tracking the motion in sim</p>
+  </div>
+  <p class="figure-caption">
+          We conducted experiments to track internet videos of human performing complex motions, including crawling down the stairs and vaulting over a large block. This shows our pipeline's ability to learn from scalable web data and its ability to learn diverse motions.
+  </p>
+
+  <div class="tagline" id="deploy-in-real-fail">Failure Cases.</div>
+
+  <!-- Video Gallery Section - REAL FAIL VIDEOS -->
+    <div class="video-gallery-section" id="realFailGallerySection">
+      <div class="video-gallery-container">
+        <div class="video-gallery" id="videoGalleryRealFail">
+          <!-- Videos remain here - ADD autoplay -->
+          <video class="gallery-video" src="./real_fail/1.mp4" autoplay muted playsinline loop></video>
+          <video class="gallery-video" src="./real_fail/2.mp4" autoplay muted playsinline loop></video>
+          <video class="gallery-video" src="./real_fail/3.mp4" autoplay muted playsinline loop></video>
+          <video class="gallery-video" src="./real_fail/4.mp4" autoplay muted playsinline loop></video>
+          <!-- Add more videos as needed, ensuring they have autoplay muted loop -->
+        </div>
+      </div>
+      <!-- Container for the caption AND buttons -->
+      <div class="gallery-caption-container">
+          <!-- Move button controls INSIDE caption container -->
+          <div class="gallery-nav-controls">
+              <button class="gallery-nav left" id="scrollLeftBtnRealFail">&lt;</button>
+              <button class="gallery-nav right" id="scrollRightBtnRealFail">&gt;</button>
+          </div>
+          <!-- Caption text -->
+          <p class="figure-caption gallery-caption">
+              <b>Failure Cases:</b> In most cases, the picking action has assigned the correct object, but the picking location is at the boundary of the object, the object tends to be out of graspable range.
+
+          </p>
+      </div>
+    </div>
+  <!-- End Video Gallery Section -->
+
+    <!-- <div class="tagline" id="acknowledgements">Acknowledgements.</div>
+    <div class="section" style="margin-top: -5px;">
+      <p>
+        We thank Brent Yi for his guidance with the excellent 3D visualization tool we use, Viser. We
+        are grateful to Ritvik Singh, Jason Liu, Ankur Handa, Ilija Radosavovic, Himanshu Gaurav-Singh,
+        Haven Feng, and Kevin Zakka for helpful advice and discussions during the paper. We thank Lea
+        M&uuml;ller for helpful discussions at the start of the project. We thank Zhizheng Liu for helpful
+        suggestions on evaluating human and scene reconstruction. We thank Moji Shi and Huayi Wang for
+        advice on using LiDAR heightmap input. We thank Eric Xu, Matthew Liu, Hayeon
+        Jeong, Hyunjoo Lee, Jihoon Choi, Tyler Bonnen, and Yao Tang for their help in capturing and
+        featuring in the video clips used in this project.
+      </p>
+    </div>
+
+    <div class="bibtex-code" id="bibtex">
+      <div class="bibtex-title">BibTeX</div>
+      <pre><code>@article{videomimic,
+          title     = {Visual imitation enables contextual humanoid control},
+          author    = {Allshire, Arthur and Choi, Hongsuk and Zhang, Junyi and McAllister, David 
+                       and Zhang, Anthony and Kim, Chung Min and Darrell, Trevor and Abbeel, 
+                       Pieter and Malik, Jitendra and Kanazawa, Angjoo},
+          journal   = {arXiv preprint arXiv:2505.03729},
+          year      = {2025}
+        }</code></pre>
+    </div> -->
+
+  </div> <!-- End of main-content div -->
+
+
+  <div class="footer">
+    <!-- © UC Berkeley | Powered by vision, motion, and a little ambition. -->
+    <!-- © 2025 Youngjin Hong | Built using code inspired by the <a href="https://www.videomimic.net/" target="_blank">VideoMimic project</a>  (UC Berkeley). -->
+    Built using code inspired by the <a href="https://www.videomimic.net/" target="_blank">VideoMimic</a> project (UC Berkeley).
+  
+  </div>
+
+  <!-- Teaser Video Autoplay with Delay and Loop -->
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const video = document.getElementById('teaser-video');
+    // const initialDelay = 1000; // No longer needed, autoplay attribute handles initial play
+    const loopDelay = 3000;    // 3 seconds delay before looping
+
+    // let initialPlayTimeout; // No longer needed
+    let loopTimeout;
+
+    if (video) {
+      // Ensure video is muted (already in HTML, but good practice)
+      video.muted = true;
+      // Controls are already in HTML, ensuring user can play if autoplay fails
+
+      // REMOVE JavaScript-based initial play:
+      /*
+      initialPlayTimeout = setTimeout(function() {
+        video.play().then(function() {
+          // Autoplay started
+        }).catch(function(error) {
+          console.log('Initial autoplay prevented for teaser video. User interaction might be needed.', error);
+          video.controls = true; // Ensure controls are visible
+        });
+      }, initialDelay);
+      */
+
+      // Loop with delay - this part can stay
+      video.addEventListener('ended', function() {
+        clearTimeout(loopTimeout); 
+        loopTimeout = setTimeout(function() {
+          video.currentTime = 0; 
+          video.play().catch(function(error) {
+            console.log('Delayed loop play prevented for teaser video:', error);
+          });
+        }, loopDelay);
+      });
+
+      // --- Clear Timeouts on Manual Pause ---
+      video.addEventListener('pause', function() {
+        if (!video.ended && video.currentTime > 0) {
+           // clearTimeout(initialPlayTimeout); // No longer needed
+           clearTimeout(loopTimeout);
+           console.log('Teaser video: Manual pause detected, clearing loop timeout.');
+        }
+      });
+
+      // --- Clear Timeouts on Manual Play (if paused before initial delay finishes) ---
+       video.addEventListener('play', function() {
+           // if (initialPlayTimeout) { // No longer needed
+           //     clearTimeout(initialPlayTimeout);
+           // }
+       });
+
+    } else {
+      console.error('Video element with ID "teaser-video" not found.');
+    }
+  });
+  </script>
+
+  <!-- JavaScript for Video Gallery Navigation -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const galleries = [
+        {
+          sectionId: 'simRelGallerySection', // ID of the .video-gallery-section for sim-relative
+          galleryInnerId: 'videoGallerySimRel',
+          scrollLeftBtnId: 'scrollLeftBtnSimRel',
+          scrollRightBtnId: 'scrollRightBtnSimRel'
+        },
+
+        {
+          sectionId: 'simAbsGallerySection', // ID of the .video-gallery-section for sim-absolute
+          galleryInnerId: 'videoGallerySimAbs',
+          scrollLeftBtnId: 'scrollLeftBtnSimAbs',
+          scrollRightBtnId: 'scrollRightBtnSimAbs'
+        },
+        {
+          sectionId: 'realRelGallerySection', // ID of the .video-gallery-section for real-relative
+          galleryInnerId: 'videoGalleryRealRel',
+          scrollLeftBtnId: 'scrollLeftBtnRealRel',
+          scrollRightBtnId: 'scrollRightBtnRealRel'
+        },
+        {
+          sectionId: 'realAbsGallerySection', // ID of the .video-gallery-section for real-absolute
+          galleryInnerId: 'videoGalleryRealAbs',
+          scrollLeftBtnId: 'scrollLeftBtnRealAbs',
+          scrollRightBtnId: 'scrollRightBtnRealAbs'
+        },
+        {
+          sectionId: 'realFailGallerySection', // ID of the .video-gallery-section for real-fail
+          galleryInnerId: 'videoGalleryRealFail',
+          scrollLeftBtnId: 'scrollLeftBtnRealFail',
+          scrollRightBtnId: 'scrollRightBtnRealFail'
+        },
+        
+        {
+          sectionId: 'reconstructionGallerySection', // ID of the .video-gallery-section for reconstruction
+          galleryInnerId: 'videoGalleryReconstruction',
+          scrollLeftBtnId: 'scrollLeftBtnReconstruction',
+          scrollRightBtnId: 'scrollRightBtnReconstruction'
+        }
+      ];
+
+      galleries.forEach(galleryConfig => {
+        const gallerySection = document.getElementById(galleryConfig.sectionId);
+        if (!gallerySection) {
+          console.error(`Gallery section with ID ${galleryConfig.sectionId} not found.`);
+          return;
+        }
+
+        const galleryContainer = gallerySection.querySelector('.video-gallery-container');
+        const galleryInner = document.getElementById(galleryConfig.galleryInnerId);
+        const scrollLeftBtn = document.getElementById(galleryConfig.scrollLeftBtnId);
+        const scrollRightBtn = document.getElementById(galleryConfig.scrollRightBtnId);
+
+        if (galleryContainer && galleryInner && scrollLeftBtn && scrollRightBtn) {
+          // Calculate the scroll amount based on the width of the first video + gap
+          const scrollAmount = (galleryInner.firstElementChild?.offsetWidth || 1280) + 15; // 15 is the gap
+
+          scrollLeftBtn.addEventListener('click', () => {
+            // Scroll the CONTAINER element
+            galleryContainer.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+          });
+
+          scrollRightBtn.addEventListener('click', () => {
+            // Scroll the CONTAINER element
+            galleryContainer.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+          });
+
+          /* --- REMOVE OR COMMENT OUT HOVER LOGIC ---
+          // Optional: Add hover-to-play functionality for gallery videos
+          // Target videos within galleryInner
+          const galleryVideos = galleryInner.querySelectorAll('.gallery-video');
+          galleryVideos.forEach(video => {
+              video.addEventListener('mouseenter', () => {
+                  video.play().catch(e => console.log("Autoplay prevented:", e));
+              });
+              video.addEventListener('mouseleave', () => {
+                  video.pause();
+                  // video.currentTime = 0; // Optional: reset video on mouse leave
+              });
+          });
+          */ // --- END OF REMOVED HOVER LOGIC ---
+
+        } else {
+          console.error(`Gallery elements not found for navigation setup in section ${galleryConfig.sectionId}.`);
+          // Log which elements might be missing
+          if (!galleryContainer) console.error('Missing element: .video-gallery-container in section ' + galleryConfig.sectionId);
+          if (!galleryInner) console.error(`Missing element with ID ${galleryConfig.galleryInnerId}`);
+          if (!scrollLeftBtn) console.error(`Missing element with ID ${galleryConfig.scrollLeftBtnId}`);
+          if (!scrollRightBtn) console.error(`Missing element with ID ${galleryConfig.scrollRightBtnId}`);
+        }
+      });
+    });
+  </script>
+
+  <!-- JavaScript for Real-to-Sim Video Synchronization -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const videosToSync = [
+        document.querySelector('.r2s-video-input'),
+        document.querySelector('.r2s-video-smpl'),
+        document.querySelector('.r2s-video-g1'),
+        document.querySelector('.r2s-video-ego-rgb'),
+        document.querySelector('.r2s-video-ego-depth'),
+        document.querySelector('.r2s-video-sim')
+      ].filter(Boolean); // Filter out nulls if any class name is wrong or video missing
+
+      function synchronizeAndPlayR2SVideos() {
+        if (videosToSync.length === 0) {
+          console.warn('No videos found for Real-to-Sim synchronization.');
+          return;
+        }
+
+        const readyPromises = videosToSync.map(video => {
+          return new Promise((resolve, reject) => {
+            // If video is already ready (e.g., cached), resolve immediately
+            if (video.readyState >= 4) { // HAVE_ENOUGH_DATA (canplaythrough)
+              resolve();
+            } else {
+              video.addEventListener('canplaythrough', resolve, { once: true });
+              video.addEventListener('error', reject, { once: true }); // Handle potential loading errors
+            }
+          });
+        });
+
+        Promise.all(readyPromises)
+          .then(() => {
+            console.log('All Real-to-Sim videos are ready to play. Starting playback.');
+            videosToSync.forEach(video => {
+              video.currentTime = 0; // Ensure starting from the beginning
+              video.play().catch(error => {
+                console.warn(`Autoplay was prevented for video ${video.src}. User interaction might be needed.`, error);
+                // Ensure controls are visible if autoplay fails for any video
+                video.controls = true;
+              });
+            });
+          })
+          .catch(error => {
+            console.error('Error waiting for Real-to-Sim videos to be ready:', error);
+            // Optionally, provide a fallback or user message here
+            videosToSync.forEach(video => video.controls = true); // Show controls on all if any failed to load
+          });
+      }
+
+      synchronizeAndPlayR2SVideos();
+
+      // The `loop` attribute on the HTML video tags will handle continuous looping.
+      // The videos will naturally re-synchronize at their LCM due to the loop attribute
+      // if they have different durations and all successfully start.
+    });
+  </script>
+
+  <!-- JavaScript to prevent default click on specific image links -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const imageLinkIds = ['figure-1-img', 'figure-2-img', 'figure-3-img'];
+      imageLinkIds.forEach(id => {
+        const linkElement = document.getElementById(id);
+        if (linkElement) {
+          linkElement.addEventListener('click', function(event) {
+            event.preventDefault();
+          });
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
