@@ -242,13 +242,21 @@ Self-Improving Robotic Manipulation</div>
 
     <div class="section-subtitle" id="l2c">2. Language Consistency Verification.</div>
 
-    <a id="figure-3-img" href="figs/3.png" download="3.png">
-      <img src="figs/3-min.png" alt="Training in Sim">
+    <a id="figure-3-img" href="figs/self_supervision.png" download="self_supervision.png">
+      <img src="figs/self_supervision.png" alt="Language Consistency Verification">
     </a>
     <!-- Caption for Figure 3 -->
     <p class="figure-caption">
-      <b>Figure 3:</b> Policy training pipeline in simulation, progressing from MoCap pre-training to environment-aware tracking and distillation.
-    </p>
+      <b>Language Consistency Verification (L2C):</b> LACY leverages the L2C task to autonomously filter and curate high-quality training data from the L2A and A2L outputs, ensuring that only samples with consistent language-action pairs are retained for further training. This self-supervisory mechanism enhances the model's robustness and generalization capabilities.
+
+    <a id="figure-4-img" href="figs/self_supervision_pipeline.png" download="self_supervision_pipeline.png">
+    <img src="figs/self_supervision_pipeline.png" alt="L2C pipeline">
+    </a>
+    <!-- Caption for Figure 4 -->
+    <p class="figure-caption">
+      <b>L2C Pipeline:</b>  The L2C (Language-to-Consistency) verifier assesses semantic alignment between input and reconstructed language pairs.
+Instead of relying on discrete model outputs, LACY extracts the logits of the “0” / “1” tokens at the final decoding step and converts their difference into a calibrated confidence value via a sigmoid function.
+This score determines whether newly generated samples are retained during the model’s self-training cycle.
 
     <div class="additional-video-row">
       <video id="input-video-cropped" class="additional-video-item" src="train_in_sim/vid1_input.mp4" autoplay muted playsinline loop></video>
@@ -447,7 +455,7 @@ Self-Improving Robotic Manipulation</div>
 
         if (galleryContainer && galleryInner && scrollLeftBtn && scrollRightBtn) {
           // Calculate the scroll amount based on the width of the first video + gap
-          const scrollAmount = (galleryInner.firstElementChild?.offsetWidth || 1200) + 15; // 15 is the gap
+          const scrollAmount = (galleryInner.firstElementChild?.offsetWidth || 1280) + 15; // 15 is the gap
 
           scrollLeftBtn.addEventListener('click', () => {
             // Scroll the CONTAINER element

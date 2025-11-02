@@ -159,16 +159,27 @@ a#figure-3-img {
 
 /* Ensure images within these links take full width and are block */
 a#figure-1-img img,
-a#figure-2-img img,
-a#figure-3-img img {
+a#figure-4-img img {
   display: block; /* Removes extra space below if image were inline */
   width: 100%;    /* Makes image fill the link's width */
   height: auto;   /* Maintains aspect ratio */
   /* General img border styles will apply unless overridden below */
 }
 
+a#figure-2-img img,
+a#figure-3-img img {
+  display: block; /* Removes extra space below if image were inline */
+  width: 70%;    /* Makes image fill the link's width */
+  height: auto;   /* Maintains aspect ratio */
+  /* General img border styles will apply unless overridden below */
+}
+
+
 /* Style for Figure 1 (figs/2-min.png) link container */
-#figure-1-img {
+#figure-1-img,
+#figure-2-img,
+#figure-3-img,
+#figure-4-img {
   margin-top: 20px; /* Consistent top margin */
   margin-left: -25px; /* Override global img margin */
   margin-right: 18px; /* Override global img margin */
