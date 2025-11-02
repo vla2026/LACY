@@ -232,12 +232,12 @@ Self-Improving Robotic Manipulation</div>
   </div>
   <!-- End Video Gallery Section -->
 
-    <a id="figure-2-img" href="figs/4.png" download="4.png">
-      <img src="figs/4-min.png" alt="Approach Overview">
+    <a id="figure-2-img" href="figs/bidirectional.png" download="bidirectional.png">
+      <img src="figs/bidirectional.png" alt="Bidirectional Tasks">
     </a>
     <!-- Caption for Figure 2 -->
     <p class="figure-caption">
-      <b>Figure 2:</b> Versatile capabilities include handling internet videos, multi-human reconstruction, and ego-view rendering.
+      <b>Language to Action, Action to Language:</b> We argue that learning the A2L approach deepens understanding of robot tasks, and this can maximize learning efficiency from limited in-domain demonstrations through bidirectional grounding.
     </p>
 
     <div class="section-subtitle" id="l2c">2. Language Consistency Verification.</div>
@@ -447,7 +447,7 @@ Self-Improving Robotic Manipulation</div>
 
         if (galleryContainer && galleryInner && scrollLeftBtn && scrollRightBtn) {
           // Calculate the scroll amount based on the width of the first video + gap
-          const scrollAmount = (galleryInner.firstElementChild?.offsetWidth || 1280) + 15; // 15 is the gap
+          const scrollAmount = (galleryInner.firstElementChild?.offsetWidth || 1200) + 15; // 15 is the gap
 
           scrollLeftBtn.addEventListener('click', () => {
             // Scroll the CONTAINER element
